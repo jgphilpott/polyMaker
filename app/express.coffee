@@ -1,18 +1,22 @@
+Mongoose = require "./mongoose"
 express = require "express"
 
-WebSocket = require "ws"
+Socket = require "./socket"
 http = require "http"
 
 path = require "path"
 
+protocol = "https://"
 platform = "express"
 host = "127.0.0.1"
 port = "4000"
 
 app = express()
+app.use express.json()
 
+mongoose = new Mongoose().connect()
 server = http.createServer app
-socket = new WebSocket.Server({ server })
+socket = new Socket server
 
 app.set "view engine", "pug"
 app.set "views", path.join(__dirname, "templates")
@@ -35,20 +39,6 @@ app.get "/tutorials", (request, responce) =>
 
     responce.render "pages/tutorials", platform: platform
 
-socket.on "connection", (node) =>
-
-    console.log "Node Connected"
-
-    node.on "message", (message) =>
-
-        console.log "Received: " + message
-
-        node.send "Echo from server: " + message
-
-    node.on "close", =>
-
-        console.log "Node Disconnected"
-
 server.listen port, =>
 
-    console.log "Polysmith listening at " + host + ":" + port
+    console.log "Polysmith listening at " + protocol + host + ":" + port
