@@ -1,5 +1,7 @@
 FROM node:latest
 
+EXPOSE 4000
+
 COPY ./ /root
 WORKDIR /root
 

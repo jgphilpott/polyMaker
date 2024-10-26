@@ -1,9 +1,60 @@
 services:
-  app:
+
+  polysmith:
+
     container_name: polysmith
     restart: always
     build: .
     volumes:
-     - .:/root
+      - .:/root
     ports:
-     - 4000:4000
+      - 4000:4000
+    depends_on:
+      - mongodb
+    networks:
+      - polynet
+
+  jupyter:
+
+    container_name: jupyter
+    image: jupyter/minimal-notebook:latest
+    restart: always
+    ports:
+      - 8888:8888
+    depends_on:
+      - mongodb
+    networks:
+      - polynet
+
+  mongo-express:
+
+    container_name: express
+    image: mongo-express:latest
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongodb
+    networks:
+      - polynet
+
+  mongodb:
+
+    container_name: mongodb
+    entrypoint: ["mongod", "--bind_ip_all"]
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - polynet
+
+networks:
+
+  polynet:
+
+    name: polynet
+    driver: bridge
