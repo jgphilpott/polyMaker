@@ -18,4 +18,8 @@ class Mongoose
                 .then => console.log "Mongoose listening at " + this.protocol + this.host + ":" + this.port
                 .catch (error) => console.error "MongoDB Connection Error", error
 
+    disconnect: ->
+
+        mongoose.connection.close()
+
 module.exports = Mongoose
