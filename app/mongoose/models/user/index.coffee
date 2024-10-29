@@ -43,14 +43,16 @@ schema = new mongoose.Schema
 
         type: Date
         default: null
+        required: false
         validate:
             validator: (v) -> not v or v < new Date()
-            message: "Date of birth must be in the past."
+            message: "Invalid Date of Birth."
 
     email:
 
         type: String
         default: null
+        required: false
         validate:
 
             validator: (v) -> not v or /^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$/.test(v)
@@ -60,6 +62,7 @@ schema = new mongoose.Schema
 
         type: String
         default: null
+        required: false
         validate:
 
             validator: (v) -> not v or /^\+?[1-9]\d{1,14}$/.test(v)
