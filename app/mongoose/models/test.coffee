@@ -1,12 +1,27 @@
 User = require "./user"
+
 crypto = require "crypto"
+
 mongoose = require "mongoose"
+{ MongoMemoryServer } = require "mongodb-memory-server"
 
 describe "Polysmith Models", ->
 
+    mode = "memory"
+
+    server = new MongoMemoryServer()
+
     beforeAll ->
 
-        await mongoose.connect "mongodb://localhost:27017/testing"
+        if mode is "memory"
+
+            await server.start()
+
+            await mongoose.connect await server.getUri()
+
+        else
+
+            await mongoose.connect "mongodb://localhost:27017/testing"
 
         await mongoose.connection.db.collection("users").deleteMany({})
         await mongoose.connection.db.collection("users").dropIndexes()
@@ -15,15 +30,19 @@ describe "Polysmith Models", ->
 
     afterAll ->
 
-        await mongoose.connection.db.dropDatabase()
+        if mode is "memory"
+
+            await mongoose.connection.db.dropDatabase()
 
         await mongoose.disconnect()
+
+        await server.stop()
 
     describe "User Model", ->
 
         it "should enforse the required inputs of username and password", ->
 
-            user = new User {}
+            user = new User()
 
             try
 
